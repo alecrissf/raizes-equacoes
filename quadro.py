@@ -97,17 +97,26 @@ def menu_escolha_metodo():
     return escolha
 
 
+def pedir_intervalos():
+    """
+    Retorna o intervalo (a, b)
+    Retorna: (int_a, int_b)
+    """
+    int_a = float(input("Informe o valor do início do intervalo (a): "))
+    int_b = float(input("Informe o valor do fim do intervalo (b): "))
+    return int_a, int_b
+
+
 def pedir_dados_res():
     """
     Retorna os dados necessários para a execução dos métodos no contexto do quadro resposta.
-    Retorna: (param_a, param_i, int_a, int_b, prec)
+    Retorna: (param_a, param_i, prec)
     """
     param_a = float(input("Informe o valor do parâmetro de ajuste inicial: "))
     param_i = float(input("Informe o incremento do parâmetro de ajuste: "))
-    int_a = float(input("Informe o valor do início do intervalo (a): "))
-    int_b = float(input("Informe o valor do fim do intervalo (b): "))
+    # int_a, int_b = pedir_intervalos()
     prec = float(input("Informe a precisão: "))
-    return param_a, param_i, int_a, int_b, prec
+    return param_a, param_i, prec
 
 
 def pedir_dados_comp():
@@ -116,8 +125,7 @@ def pedir_dados_comp():
     Retorna: (param_a, int_a, int_b, prec)
     """
     param_a = float(input("Informe o valor do parâmetro de ajuste: "))
-    int_a = float(input("Informe o valor do início do intervalo (a): "))
-    int_b = float(input("Informe o valor do fim do intervalo (b): "))
+    int_a, int_b = pedir_intervalos()
     prec = float(input("Informe a precisão: "))
     return param_a, int_a, int_b, prec
 
@@ -129,33 +137,36 @@ def quadro_resposta():
     metodo = menu_escolha_metodo()
     num = int(input("Qual a quantidade de aviões a serem testados? "))
     print()
-    param_a, param_i, int_a, int_b, prec = pedir_dados_res()
-
-    try:
-        func(int_a, param_a)
-    except ValueError:
-        print(f"A função f não estã definida para o valor {int_a}")
+    param_a, param_i, prec = pedir_dados_res()
 
     linhas = [Quadro.Linha(["Parâmetro(a)", "valor de d", "Erro", "Método"])]
 
-    for _ in range(num):
+    for i in range(num):
+        print(f"\nIntervalo para o avião {i}:")
+        int_a, int_b = pedir_intervalos()
+
+        try:
+            func(int_a, param_a)
+        except ValueError:
+            print(f"A função f não estã definida para o valor {int_a}")
+
         # Calculo pelo método da Bissecção.
         if metodo == '1':
-            x_f = metodos.bisseccao(param_a, int_a, int_b, prec)
-            cols = [param_a, x_f, 0.00001, "Bissecção"]
+            x_f, erro = metodos.bisseccao(param_a, int_a, int_b, prec)
+            cols = [param_a, x_f, erro, "Bissecção"]
             linhas.append(Quadro.Linha(cols))
 
         # Calculo pelo método da Posição Falsa.
         elif metodo == '2':
-            x_f = metodos.posicao_falsa(param_a, int_a, int_b, prec)
-            cols = [param_a, x_f, 0.00001, "Posição Falsa"]
+            x_f, erro = metodos.posicao_falsa(param_a, int_a, int_b, prec)
+            cols = [param_a, x_f, erro, "Posição Falsa"]
             linhas.append(Quadro.Linha(cols))
 
         # Calculo pelo método de Newton-Raphson.
         elif metodo == '3':
             x_init = (int_a + int_b) / 2
-            x_f = metodos.newton_raphson(param_a, x_init, prec)
-            cols = [param_a, x_f, 0.00001, "Newton-Raphson"]
+            x_f, erro = metodos.newton_raphson(param_a, x_init, prec)
+            cols = [param_a, x_f, erro, "Newton-Raphson"]
             linhas.append(Quadro.Linha(cols))
 
         param_a = param_a + param_i
@@ -178,7 +189,8 @@ def quadro_comparativo():
     }
 
     linhas = [
-        Quadro.Linha(["Método", "Parâmetro(a)", "valor de d", "Isolamento"])
+        Quadro.Linha(
+            ["Método", "Parâmetro(a)", "valor de d", "Erro", "Isolamento"])
     ]
 
     for i, metodo in escolha.items():
@@ -187,24 +199,24 @@ def quadro_comparativo():
 
         # Calculo pelo método da Bissecção.
         if i == 1:
-            x_f = metodos.bisseccao(param_a, int_a, int_b, prec)
-            cols = ["Bissecção", param_a, x_f, f"({int_a}, {int_b})"]
+            x_f, err = metodos.bisseccao(param_a, int_a, int_b, prec)
+            cols = ["Bissecção", param_a, x_f, err, f"({int_a}, {int_b})"]
             linhas.append(Quadro.Linha(cols))
 
         # Calculo pelo método da Posição Falsa.
         elif i == 2:
-            x_f = metodos.posicao_falsa(param_a, int_a, int_b, prec)
-            cols = ["Posição Falsa", param_a, x_f, f"({int_a}, {int_b})"]
+            x_f, err = metodos.posicao_falsa(param_a, int_a, int_b, prec)
+            cols = ["Posição Falsa", param_a, x_f, err, f"({int_a}, {int_b})"]
             linhas.append(Quadro.Linha(cols))
 
         # Calculo pelo método de Newton-Raphson.
         elif i == 3:
             x_init = (int_a + int_b) / 2
-            x_f = metodos.newton_raphson(param_a, x_init, prec)
-            cols = ["Newton-Raphson", param_a, x_f, f"({int_a}, {int_b})"]
+            x_f, err = metodos.newton_raphson(param_a, x_init, prec)
+            cols = ["Newton-Raphson", param_a, x_f, err, f"({int_a}, {int_b})"]
             linhas.append(Quadro.Linha(cols))
 
-    quadro = Quadro(linhas, [25, 25, 25, 25])
+    quadro = Quadro(linhas, [22, 22, 22, 22, 12])
     quadro.mostrar()
     # quadro = Quadro(linhas, [300, 100, 200, 200])
     # quadro.mostrar_janela()

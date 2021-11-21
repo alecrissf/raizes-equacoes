@@ -18,16 +18,17 @@ def bisseccao(param_a, int_a, int_b, prec, max_iter=100):
     - prec: precisão do método
     - max_iter: número máximo de iterações do programa (padrão 100)
 
-    Retorna o resultado de x ou -1 caso não possua raizes no intervalo
-    TODO: retornar erro junto com o valor de x
+    Retorna o resultado de x ou -1 caso não possua raizes no intervalo e o valor do erro.
     """
     # Caso f(a) * f(b) > 0, o intervalo (a,b) não possui raizes.
     if func(int_a, param_a) * func(int_b, param_a) > 0:
-        return -1
+        return -1, None
     # Contador de iterações.
     cont = 0
     # Ponto médio.
     x_f = (int_a + int_b) / 2
+    # Erro.
+    erro = x_f
     # Iterar até o valor de f(x) ser menor que a precisão.
     while math.fabs(func(x_f, param_a)) > prec:
         if func(int_a, param_a) * func(x_f, param_a) < 0:
@@ -36,13 +37,15 @@ def bisseccao(param_a, int_a, int_b, prec, max_iter=100):
             int_a = x_f
         # Ponto médio.
         x_f = (int_a + int_b) / 2
+        # Calcular erro.
+        erro = math.fabs(x_f - erro)
         # Incrementar o contador.
         cont = cont + 1
         # Se atingir o número máximo de iterações interromper.
         if cont >= max_iter:
             break
 
-    return x_f
+    return x_f, erro
 
 
 def posicao_falsa(param_a, int_a, int_b, prec, max_iter=100):
@@ -54,17 +57,18 @@ def posicao_falsa(param_a, int_a, int_b, prec, max_iter=100):
     - prec: precisão do método
     - max_iter: número máximo de iterações do programa (padrão 100)
 
-    Retorna o resultado de x ou -1 caso não possua raizes no intervalo
-    TODO: retornar erro junto com o valor de x
+    Retorna o resultado de x ou -1 caso não possua raizes no intervalo e o valor do erro.
     """
     # Caso f(a) * f(b) > 0, o intervalo (a,b) não possui raizes.
     if func(int_a, param_a) * func(int_b, param_a) > 0:
-        return -1
+        return -1, None
     # Contador de iterações.
     cont = 0
     # Ponto médio.
     x_f = (int_a * func(int_b, param_a) - int_b * func(int_a, param_a)) / (
         func(int_b, param_a) - func(int_a, param_a))
+    # Erro.
+    erro = x_f
     # Iterar até o valor de f(x) ser menor que a precisão.
     while math.fabs(func(x_f, param_a)) > prec:
         if func(int_a, param_a) * func(x_f, param_a) < 0:
@@ -75,13 +79,15 @@ def posicao_falsa(param_a, int_a, int_b, prec, max_iter=100):
         # Ponto médio.
         x_f = (int_a * func(int_b, param_a) - int_b * func(int_a, param_a)) / (
             func(int_b, param_a) - func(int_a, param_a))
+        # Calcular erro.
+        erro = math.fabs(x_f - erro)
         # Incrementar o contador.
         cont = cont + 1
         # Se atingir o número máximo de iterações interromper.
         if cont >= max_iter:
             break
 
-    return x_f
+    return x_f, erro
 
 
 def newton_raphson(param_a, x_init, prec, max_iter=100):
@@ -92,21 +98,24 @@ def newton_raphson(param_a, x_init, prec, max_iter=100):
     - prec: precisão do método
     - max_iter: número máximo de iterações do programa (padrão 100)
 
-    Retorna o resultado de x ou -1 caso não possua raizes no intervalo
-    TODO: retornar erro junto com o valor de x
+    Retorna o resultado de x ou -1 caso não possua raizes no intervalo e o valor do erro.
     """
     # Contador de iterações.
     cont = 0
     # Valor de x
     x_f = x_init
+    # Erro.
+    erro = x_f
     # Iterar até o valor de f(x) ser menor que a precisão.
     while math.fabs(func(x_f, param_a)) > prec:
         # Calcular o novo x.
         x_f = x_f - (func(x_f, param_a) / d_func(x_f, param_a))
+        # Calcular erro.
+        erro = math.fabs(x_f - erro)
         # Incrementar o contador.
         cont = cont + 1
         # Se atingir o número máximo de iterações interromper.
         if cont >= max_iter:
             break
 
-    return x_f
+    return x_f, erro

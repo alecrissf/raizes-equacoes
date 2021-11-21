@@ -53,21 +53,21 @@ def main():
         # Calculo pelo método da Bissecção.
         if escolha == '1':
             param_a, int_a, int_b, prec = pedir_dados()
-            x_f = metodos.bisseccao(param_a, int_a, int_b, prec)
-            print(f"\nO valor da raiz é: {x_f}\n")
+            x_f, erro = metodos.bisseccao(param_a, int_a, int_b, prec)
+            print(f"\nO valor da raiz é: {x_f}\nCom erro de: {erro}\n")
 
         # Calculo pelo método da Posição Falsa.
         elif escolha == '2':
             param_a, int_a, int_b, prec = pedir_dados()
-            x_f = metodos.posicao_falsa(param_a, int_a, int_b, prec)
-            print(f"\nO valor da raiz é: {x_f}\n")
+            x_f, erro = metodos.posicao_falsa(param_a, int_a, int_b, prec)
+            print(f"\nO valor da raiz é: {x_f}\nCom erro de: {erro}\n")
 
         # Calculo pelo método de Newton-Raphson.
         elif escolha == '3':
             param_a, int_a, int_b, prec = pedir_dados()
             x_init = (int_a + int_b) / 2
-            x_f = metodos.newton_raphson(param_a, x_init, prec)
-            print(f"\nO valor da raiz é: {x_f}\n")
+            x_f, erro = metodos.newton_raphson(param_a, x_init, prec)
+            print(f"\nO valor da raiz é: {x_f}\nCom erro de: {erro}\n")
 
         # Fornecer quadro resposta.
         elif escolha == '4':
